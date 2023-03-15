@@ -290,7 +290,7 @@ setRef(refsString, choicesDlg, smPID)
 ; Description:
 ;   Copies the input to the clipboard and returns only when all data
 ;   has been transferred.
-;   Can be used as a more accurate alternative to ClipWait.
+;   Can be used as an alternative to ClipWait if it fails to do the job.
 ;
 ; Input parameter:
 ;   data - variable containing data to be copied to the clipboard
@@ -429,7 +429,7 @@ listFiles(dir)
 ; --------------------
 ;
 ; Description:
-;   Activates the element window in SM unless it is already active window.
+;   Activates the element window in SM unless it is already active.
 ;
 ; Input parameter:
 ;   smPID - integer containing the process ID of SuperMemo
@@ -472,9 +472,12 @@ sendContextMenuCommand(wParam, smPID)
     ocontextMenuID := WinGetList("ahk_class TPUtilWindow ahk_pid " smPID,,,)
     acontextMenuID := Array()
     contextMenuID := ocontextMenuID.Length
-    For v in ocontextMenuID
-    {   acontextMenuID.Push(v)
+    
+    for v in ocontextMenuID
+    {
+        acontextMenuID.Push(v)
     }
+    
     PostMessage(0x0111, wParam, , , "ahk_id " acontextMenuID[5]) ; 5th element = id of context menu
     DetectHiddenWindows(false)
     return

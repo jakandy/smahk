@@ -65,6 +65,7 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 #Include <smahk-Extract>         ; Module for the extract functionality
 #Include <smahk-ImageOcclusion>  ; Module for image occlusion functions
+#Include <smahk-MarkAndRecall>   ; Module for image occlusion functions
 
 ; ******************************************************************************
 ; ********************************** SETTINGS **********************************
@@ -97,10 +98,10 @@ else
     smPID := WinGetPID("ahk_exe " smProcessName)
 
 WinWait("ahk_pid " smPID)
+IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
 Sleep(3000)
 
 ; Terminate SM on window close
-writeToINI(smPID)
 WinWaitClose("ahk_pid " smPID)
 ExitApp()
 
@@ -150,7 +151,7 @@ ExitApp()
 
 ^!i::
 {
-    writeToINI(smPID)
+    IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
     Run("lib\smahk-WebImporter.ahk")
     return
 }
@@ -218,6 +219,29 @@ ExitApp()
     KeyWait("alt")
     Run("lib\smahk-Backup.ahk")
     return
+}
+
+^!Enter::
+{
+    KeyWait("ctrl")
+    KeyWait("alt")
+    markedEl := markCurrentElement(smPID)
+    IniWrite(markedEl, "smahk-settings.ini", "Settings", "markedElement")
+    return
+}
+
+^!Backspace::
+{
+    KeyWait("ctrl")
+    KeyWait("alt")
+    markedEl := IniRead("smahk-settings.ini", "Settings", "markedElement")
+
+    if (markedEl == "")
+        MsgBox("No element has been marked.", "Error!", 0)
+    else
+        recallMarkedElement(markedEl, smPID)
+    
+    Return
 }
 
 !1::
@@ -290,27 +314,3 @@ ExitApp()
     return
 }
 #HotIf
-
-
-; ******************************************************************************
-; ********************************* FUNCTIONS **********************************
-; ******************************************************************************
-; Function name: writeToINI
-; --------------------
-;
-; Description:
-;   ---
-;
-; Input parameter:
-;   ---
-;
-; Return:
-;   ---
-;
-writeToINI(smPID)
-{
-    ; Process ID of SuperMemo
-    IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
-    return
-}
-

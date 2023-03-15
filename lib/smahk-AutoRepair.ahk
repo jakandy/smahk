@@ -61,19 +61,27 @@ if (ErrorLevel != 0)
 autoRepairCollection(true)
 ErrorLevel := WinWaitActive("ahk_exe notepad++.exe") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
 Sleep(3000)
-WinActivate("ahk_exe " smProcessName)
-ErrorLevel := WinWaitActive("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-WinActivate("ahk_class TElWind")
-ErrorLevel := WinWaitActive("ahk_class TElWind", , 5) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-if (ErrorLevel != 0)
+Send("!{tab}")
+Sleep(5000)
+
+; Close SM if no errors during repair
+if ( WinActive("ahk_class TMsgDialog", "Error!") == 0 )
 {
-    MsgBox("Blabla", "Error!", 0)
-    ExitApp()
+    WinActivate("ahk_exe " smProcessName)
+    ErrorLevel := WinWaitActive("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinActivate("ahk_class TElWind")
+    ErrorLevel := WinWaitActive("ahk_class TElWind", , 5) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    if (ErrorLevel != 0)
+    {
+        MsgBox("Could not activate element window.", "Error!", 0)
+        ExitApp()
+    }
+    Sleep(3000)
+    Send("!{f4}")
+    ErrorLevel := WinWaitClose("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    Sleep(1000)
 }
-Sleep(1000)
-WinClose("ahk_exe " smProcessName)
-ErrorLevel := WinWaitClose("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-Sleep(1000)
+
 ExitApp()
 
 ; ******************************************************************************
