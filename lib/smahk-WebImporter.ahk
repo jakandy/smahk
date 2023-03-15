@@ -2,19 +2,14 @@
 ;   SuperMemo AHK - Web Importer module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   This file contains a GUI used for importing web articles into SuperMemo.
-;   Many functions here uses the PostMessage function and some
-;   wParam argument values changes between SuperMemo versions. 
-;   This means that most functions will probably only work for the
-;   version of SuperMemo listed in the requirements section below.
-;   To update the functions for other versions, new wParam values need to
-;   be found using a software like Spy++.
+;   A module that is part of the smahk script. It adds the functionality to
+;   import web articles into SuperMemo using any web browser.
 ;
 ; Usage:
 ;   Place this file in the same folder as "smahk.ahk".
@@ -22,16 +17,21 @@
 ;   options to import articles.
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;   - Mozilla Firefox, version 102.5.0
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0
@@ -93,7 +93,6 @@ ButtonOK(A_GuiEvent, GuiCtrlObj, Info, *)
 
     ExitApp()
 }
-
 
 ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
 {

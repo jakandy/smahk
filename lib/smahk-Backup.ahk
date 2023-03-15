@@ -2,27 +2,36 @@
 ;   SuperMemo AHK - Backup module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   ---
+;   A module that is part of the smahk script. It adds the functionality to
+;   backup the collection to a directory called "backup", located in the same
+;   directory as the SuperMemo exe.
 ;
 ; Usage:
-;   ---
+;   This script is meant to be called from another script
+;   using the Run()-function. A messagebox will appear prompting the user
+;   to start the backup process.
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0
@@ -37,7 +46,7 @@ SetKeyDelay(0, 10)
 ; ******************************************************************************
 knoPathKno := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
-if ( (knoPathKno == "ERROR") OR (smProcessName == "ERROR") )
+if ( (knoPathKno == "") OR (smProcessName == "") )
 {
     MsgBox("Could not find path to SuperMemo executable.", "Error!", 0)
     ExitApp()
@@ -46,7 +55,7 @@ if ( (knoPathKno == "ERROR") OR (smProcessName == "ERROR") )
 SourceFolder := SubStr(knoPathKno, 1, -4)
 TargetFolder := SubStr(knoPathKno, 1, InStr(knoPathKno, "\systems\", , -2)) . "backup"
 
-msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder ".`n`n(Be aware that SuperMemo will be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
+msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder "`n`n(Be aware that SuperMemo will be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
 if (msgResult = "No")
     ExitApp()
     
@@ -84,7 +93,7 @@ else
 {
     msgResult := MsgBox("Backup done! `n `nWould you like to restart SuperMemo?", "SuperMemo AHK Backup", 4)
     if (msgResult = "Yes")
-        Run("smahk.ahk")
+        Run("..\smahk.ahk")
 }
     
 ExitApp()

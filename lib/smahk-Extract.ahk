@@ -2,38 +2,36 @@
 ;   SuperMemo AHK - Extract module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   This file contains functions that can be used when
-;   extracting from different sources and import into SuperMemo.
-;   Many functions here uses the PostMessage function and some
-;   wParam argument values changes between SuperMemo versions. 
-;   This means that most functions will probably only work for the
-;   version of SuperMemo listed in the requirements section below.
-;   To update the functions for other versions, new wParam values need to
-;   be found using a software like Spy++.
+;   A module that is part of the smahk script. It is a library containing functions to
+;   extract text or images from different sources and import them into SuperMemo.
 ;
 ; Usage:
-;   Place this file in the same folder as the script you want to use.
-;   Add at the top of your script: "#Include smahk-lib.ahk" without quotes.
-;   Call any function in this library like any other function, i.e. 
-;   functionName(argument). Read the header of each function for more info
-;   about what they do and how to use.
+;   Place this file in any directory and include it to your script using
+;   the #include directive. Then you can call any function as normal.
+;   Read the header of each function for more info about
+;   what they do and how to use them.
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0

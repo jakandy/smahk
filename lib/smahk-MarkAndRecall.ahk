@@ -2,27 +2,37 @@
 ;   SuperMemo AHK - Mark and Recall module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   ---
+;   A module that is part of the smahk script. It is a library containing functions to
+;   save the number of an element (mark) that you want to come back to later (recall).
+;   (Yes, it is named after the magic spell from Morrowind ;) )
 ;
 ; Usage:
-;   Place this file in the same directory as the other files for smahk.
-;   
+;   Place this file in the same directory as "smahk-lib.ahk" and include it
+;   to your script using the #include directive. Then you can call any function
+;   as normal. Read the header of each function for more info about
+;   what they do and how to use them.
+;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0

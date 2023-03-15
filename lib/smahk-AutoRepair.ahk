@@ -2,13 +2,15 @@
 ;   SuperMemo AHK - Auto Repair module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   ---
+;   A module that is part of the smahk script. It adds the functionality to
+;   automatically run the repair utility of SuperMemo.
+;   It is meant to be run at a scheduled time, using Windows Task Scheduler.
 ;
 ; Usage:
 ;   Place this file in the same directory as the other files for smahk.
@@ -17,15 +19,20 @@
 ;   options to import articles.
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0
@@ -34,13 +41,12 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
 
-
 ; ******************************************************************************
 ; ********************************* MAIN PROGRAM START *************************
 ; ******************************************************************************
 knoPath := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
-if ( (knoPath == "ERROR") OR (smProcessName == "ERROR") )
+if ( (knoPath == "") OR (smProcessName == "") )
 {
     MsgBox("Could not find path to SuperMemo executable.", "Error!", 0)
     ExitApp()
@@ -104,7 +110,7 @@ autoRepairCollection(detailed)
 {
     Send("^{f12}")
     ErrorLevel := WinWaitActive("ahk_class TRecoveryDialog") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    Sleep(5000)
+    Sleep(10000)
     if (detailed == true)
     {
         Send("{down}")

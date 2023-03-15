@@ -2,13 +2,14 @@
 ;   SuperMemo AHK - Search module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   This script searches for an element in your current SuperMemo collection.
+;   A module that is part of the smahk script. It adds the functionality to
+;   search for an element in the SuperMemo collection.
 ;   It is meant to be run using an application launcher, e.g. Keypirinha.
 ;
 ; Usage:
@@ -19,15 +20,21 @@
 ;   smahk-Search.ahk search string
 ;   
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
+;   - Keypirinha, version 2.26
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0

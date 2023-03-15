@@ -2,19 +2,14 @@
 ;   SuperMemo AHK - Concept menu module
 ;
 ; Version:
-;   v1.00, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ; 
 ; Description:
-;   This file contains a GUI used for working with concepts in SuperMemo.
-;   Many functions here uses the PostMessage function and some
-;   wParam argument values changes between SuperMemo versions. 
-;   This means that most functions will only work for the
-;   version of SuperMemo listed in the requirements section below.
-;   To update the functions for other versions, new wParam values need to
-;   be found using a window application software like Spy++.
+;   A module that is part of the smahk script. It adds the functionality to
+;   easier perform various concept-related actions.
 ;
 ; Usage:
 ;   Place this file in the same folder as "smahk.ahk".
@@ -22,15 +17,20 @@
 ;   options.
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0
@@ -40,7 +40,7 @@ SetWorkingDir(A_ScriptDir)
 SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"             ; Custom subroutines used in the script.
 InstallKeybdHook()                   ; Used for enabling A_PriorKey variable
-KeyHistory(2)                       ; Number of previous keypresses in history
+KeyHistory(2)                        ; Number of previous keypresses in history
 
 ; ******************************************************************************
 ; ********************************* MAIN PROGRAM START *************************
@@ -197,7 +197,7 @@ linkToConcept(smPID)
 ;
 linkToMultConcepts(smPID)
 {
-    ; TODO: fix bug when clicking on close window or searching
+    ; TODO: fix bug when clicking on close window or searching from reg window
     while ( (A_Index == 1) OR (A_PriorKey != "Escape") )
     {
         listLinks(smPID)

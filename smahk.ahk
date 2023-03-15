@@ -2,35 +2,43 @@
 ;   SuperMemo AHK
 ;
 ; Version:
-;   0.1, 09/2022
+;   v1.00, 03/2023
 ;
 ; Author:
 ;   andyjak
 ;
 ; Description:
-;   This script automates the UI using simulated keyboard and mouse presses
-;   to improve the user experience of SuperMemo. The scripting language used
-;   is AutoHotkey.
-;   The script is meant to be running concurrently with SuperMemo to call
-;   different functions using hotkeys.
+;   This script automates the UI of SuperMemo using the open-source
+;   scripting language AutoHotkey.
+;   The script is a "master script", meant to be running concurrently
+;   with SuperMemo. When the user presses a particular hotkey (see the
+;   "Usage" section below), this script calls a certain function. The function
+;   then executes its task and returns to this script again. If the user
+;   closes SuperMemo, the script is automatically terminated.
+;   It is meant to be software-agnostic, meaning you can use it with any web
+;   browser or reader application. However, that does not guarantee that it
+;   will always work for every application. Feel free to edit this script
+;   to better suit your needs.
 ;
-; Installation instructions:
-;   Exe: Extract smahk.exe in any directory and run it.
-;   Ahk: Extract all files with the prefix "smahk-" in any directory and
-;        run smahk.ahk (requires AutoHotkey to be installed).
+; Installation:
+;   exe: Extract smahk.exe into any directory and run it.
+;   ahk: Extract all ahk files in any directory and run smahk.ahk
+;        (requires AutoHotkey v2 to be installed).
 ;   Be aware that only one collection can be used for each smahk installation.
-;   To use smahk with several collection you will therefore need to copy
-;   and paste the files in separate directories.
+;   To use smahk with several collections you will therefore need to install
+;   smahk several times in separate directories.
 ;   The first time running the script you will be prompted to specify the file
 ;   path for: SuperMemo and the web browser you want to use for web imports.
-;   The paths can also be changed manually by editing smahk-settings.ini
-;   or by running smahk-Config.ahk if you are using the ahk-version.
+;   The paths can also be changed manually by editing smahk-settings.ini.
+;   You may get a warning from your anti-virus if you run "smahk.exe" but it is
+;   just a false positive. If you're still worried about it, then you can
+;   use the ahk-version instead.
 ;
 ; Usage:
-;   When the script and SuperMemo is running, press any of the below hotkeys to
+;   While the script and SuperMemo is running, press any of the below hotkeys to
 ;   perform the associated action.
 ;
-;       General hotkeys (can be invoked anywhere):
+;       General hotkeys (can be invoked from any application):
 ;       - Ctrl-Alt-X: Extract text or image into new topic
 ;       - Ctrl-Shift-X: Extract text or image into previous topic
 ;       - Alt-Shift-X: Extract text or image into current topic
@@ -38,25 +46,32 @@
 ;       - Shift-Esc: Reload script
 ;
 ;       Browser hotkeys:
-;       - Ctrl-Alt-I: Import web article (GUI)
+;       - Ctrl-Alt-I: Show GUI for importing web article
 ;
 ;       SuperMemo hotkeys:
-;       - Alt-1-9: Change priority of current element to certain range
+;       - Alt-0-9: Change priority of current element within certain range
 ;       - Ctrl-Alt-Middleclick: Open a hyperlink in web browser
 ;       - Ctrl-Alt-O: Create image occlusion item
 ;       - Ctrl-Alt-N: Create new child topic
 ;       - Ctrl-Alt-C: Show GUI for concept options
+;       - Ctrl-Alt-Enter: Mark the current element
+;       - Ctrl-Alt-Backspace: Go to marked element
 ;
 ; Tested with:
-;   - SuperMemo 18.05
+;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
 ;
 ; Terms of use:
-;   This script was created for personal use, so it is not tested or optimized
-;   on other systems.
-;   The author is not responsible for any unintentional harm to your
-;   SuperMemo collection or computer. Use at your own risk!
+;   Copyright (C) 2023 andyjak
+;   This program is free software: you can redistribute it and/or modify
+;   it under the terms of the GNU General Public License as published by
+;   the Free Software Foundation, either version 3 of the License, or
+;   (at your option) any later version.
+;   This program is distributed in the hope that it will be useful,
+;   but WITHOUT ANY WARRANTY; without even the implied warranty of
+;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;   GNU General Public License for more details.
 ;
 
 #Requires AutoHotkey v2.0
@@ -65,28 +80,22 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 #Include <smahk-Extract>         ; Module for the extract functionality
 #Include <smahk-ImageOcclusion>  ; Module for image occlusion functions
-#Include <smahk-MarkAndRecall>   ; Module for image occlusion functions
+#Include <smahk-MarkAndRecall>   ; Module for mark and recall functions
 
 ; ******************************************************************************
 ; ********************************** SETTINGS **********************************
 ; ******************************************************************************
+; Run configurator if unable to find settings
 if not FileExist("smahk-settings.ini")
-{
-    Run("smahk-Configurator.ahk")
-    ExitApp()
-}
+    GoTo("Configuration")
 
 ; Load settings
 knoPath := IniRead("smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("smahk-settings.ini", "Settings", "smProcessName")
 browserProcessName := IniRead("smahk-settings.ini", "Settings", "browserProcessName")
 
-; Run configurator if unable to find settings
-if ( (knoPath == "ERROR") OR ((knoPath == "")) OR (smProcessName == "ERROR") OR ((smProcessName == "")) )
-{
-    Run("smahk-Config.ahk")
-    ExitApp()
-}
+if ( (knoPath == "") OR (smProcessName == "") OR (browserProcessName == "") )
+    GoTo("Configuration")
 
 ; ******************************************************************************
 ; ************************************ MAIN ************************************
@@ -97,11 +106,12 @@ if ( WinExist("ahk_exe " . smProcessName) == 0 )
 else
     smPID := WinGetPID("ahk_exe " smProcessName)
 
+; Save the ID of the current SM process
 WinWait("ahk_pid " smPID)
 IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
 Sleep(3000)
 
-; Terminate SM on window close
+; Terminate script when SM closes
 WinWaitClose("ahk_pid " smPID)
 ExitApp()
 
@@ -244,6 +254,13 @@ ExitApp()
     Return
 }
 
+!0::
+{
+    randPrio := Random(0.0000, 1.0000)
+    setPriority(randPrio, smPID)
+    return
+}
+
 !1::
 {
     randPrio := Random(1.0000, 10.0000)
@@ -307,10 +324,78 @@ ExitApp()
     return
 }
 
-!0::
-{
-    randPrio := Random(0.0000, 1.0000)
-    setPriority(randPrio, smPID)
-    return
-}
 #HotIf
+
+; ******************************************************************************
+; ******************************** CONFIGURATION *******************************
+; ******************************************************************************
+Configuration:
+    ; TODO: add option to change keyboard bindings for smahk
+
+    if not FileExist("smahk-settings.ini")
+        FileAppend("", "smahk-settings.ini")
+
+    knoPath := IniRead("smahk-settings.ini", "Settings", "knoPath", "ERROR")
+    if (knoPath == "ERROR")
+        knoPath := ""
+
+    browserPath := IniRead("smahk-settings.ini", "Settings", "browserPath", "ERROR")
+    if (browserPath == "ERROR")
+        browserPath := ""
+
+    ; show import options GUI
+    myGui := Gui(, "SuperMemo AHK Configuration")
+    myGui.OnEvent("Escape", ButtonCancel.Bind("Normal", myGui))
+    myGui.Add("Text", "xm", "SuperMemo Collection path:")
+    ogcEditUIknoPath := myGui.Add("Edit", "r1 vUIknoPath w135", knoPath)
+    ogcButtonBrowse := myGui.Add("Button", "x+m", "Browse")
+    ogcButtonBrowse.OnEvent("Click", BtnSM.Bind("Normal"))
+    myGui.Add("Text", "xm", "Web browser path:")
+    ogcEditUIBrowserPath := myGui.Add("Edit", "r1 vUIBrowserPath w135", browserPath)
+    ogcButtonBrowse := myGui.Add("Button", "x+m", "Browse")
+    ogcButtonBrowse.OnEvent("Click", BtnWeb.Bind("Normal"))
+    ogcButtonOK := myGui.Add("Button", "default xm", "OK")
+    ogcButtonOK.OnEvent("Click", ButtonOK.Bind("Normal"))
+    ogcButtonCancel := myGui.Add("Button", "x+m", "Cancel")
+    ogcButtonCancel.OnEvent("Click", ButtonCancel.Bind("Normal"))
+    myGui.Show()
+
+    BtnSM(A_GuiEvent, GuiCtrlObj, Info, *)
+    {
+        knoPath := FileSelect("", "", "Select the SuperMemo collection you want to use with smahk", "Knowledge collection (*.kno)")
+        ogcEditUIknoPath.Value := knoPath
+        return
+    }
+        
+    BtnWeb(A_GuiEvent, GuiCtrlObj, Info, *)
+    {
+        browserPath := FileSelect("", "", "Select the executable of the web browser to use for SuperMemo imports", "Executable (*.exe)")
+        ogcEditUIBrowserPath.Value := browserPath
+        return
+    }
+
+    ButtonOK(A_GuiEvent, GuiCtrlObj, Info, *)
+    {
+        oSaved := myGui.Submit()
+        IniWrite(oSaved.UIknoPath, "smahk-settings.ini", "Settings", "knoPath")
+        IniWrite(oSaved.UIBrowserPath, "smahk-settings.ini", "Settings", "browserPath")
+        
+        if (oSaved.UIknoPath != "")
+            smProcessName := "sm18.exe"
+        else
+            smProcessName := ""
+        IniWrite(smProcessName, "smahk-settings.ini", "Settings", "smProcessName")
+        
+        if (oSaved.UIBrowserPath != "")
+            browserProcessName := SubStr(oSaved.UIBrowserPath, InStr(oSaved.UIBrowserPath,"\",,-1)+1)
+        else
+            browserProcessName := ""
+        IniWrite(browserProcessName, "smahk-settings.ini", "Settings", "browserProcessName")
+        
+        ExitApp()
+    }
+
+    ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
+    {
+        ExitApp()
+    }
