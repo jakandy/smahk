@@ -9,11 +9,10 @@
 ; 
 ; Description:
 ;   A module that is part of the smahk script. It adds the functionality to
-;   search for an element in the SuperMemo collection.
+;   search for an element in the collection from outside SuperMemo.
 ;   It is meant to be run using an application launcher, e.g. Keypirinha.
 ;
 ; Usage:
-;   Place this file in the same directory as the other files for smahk.
 ;   Run this script with your search string as command arguments, ex:
 ;   smahk-Search.ahk "search string"
 ;   or
@@ -44,6 +43,9 @@ SetWorkingDir(A_ScriptDir)
 SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
 
+; ******************************************************************************
+; ************************************ MAIN ************************************
+; ******************************************************************************
 searchstring := parseCmdArg()
 
 if (searchstring == "")
@@ -110,6 +112,7 @@ parseCmdArg()
 ;
 ; Input parameter:
 ;   string - variable containing the search string
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---

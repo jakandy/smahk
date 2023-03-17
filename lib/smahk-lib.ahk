@@ -13,8 +13,8 @@
 ;
 ; Usage:
 ;   Place this file in any directory and include it to your script using
-;   the #include directive. Then you can call any function as normal.
-;   Read the header of each function for more info about
+;   the #include directive. After that you can call any function as normal.
+;   Please read the header of each function for more info about
 ;   what they do and how to use them.
 ;
 ; Tested with:
@@ -36,6 +36,9 @@
 
 #Requires AutoHotkey v2.0
 
+; ******************************************************************************
+; ************************************* FUNCTIONS ******************************
+; ******************************************************************************
 ; Function name: setPriority
 ; --------------------
 ;
@@ -44,6 +47,7 @@
 ;
 ; Input parameter:
 ;   prio - Priority value of the element (0-100)
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   0 - if priority was successfully set
@@ -52,12 +56,11 @@
 setPriority(prio, smPID)
 {
     Send("!{p}")
-    ErrorLevel := WinWaitActive("ahk_class TPriorityDlg ahk_pid " smPID, , 3) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    if (ErrorLevel != 0)
+    if (!WinWaitActive("ahk_class TPriorityDlg ahk_pid " smPID,, 3))
         return -1
     Send(prio)
     Send("{Enter}")
-    ErrorLevel := WinWaitNotActive("ahk_class TPriorityDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitNotActive("ahk_class TPriorityDlg ahk_pid " smPID)
     return 0
 }
 
@@ -73,7 +76,7 @@ setPriority(prio, smPID)
 ;
 ; Input parameter:
 ;   previousEl - String of the window title of the previous element.
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -161,7 +164,7 @@ safePasteText(timeout := 10000)
 ;   The html component should be active for this to work.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -177,11 +180,11 @@ openLinkAtMousePos(smPID)
 ; --------------------
 ;
 ; Description:
-;   ---
+;   Creates a new topic as a child to the current element.
 ;
 ; Input parameter:
 ;   inheritance - bool deciding if properties should be inherited from parent
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -193,7 +196,6 @@ createNewChildTopic(inheritance, smPID)
     if ( (InStr(currentEl, "Concept:")) AND (inheritance == true) )
     {
         msgResult := MsgBox("Create extract from concept?", "Warning!", 4)
-        ; TODO: change below to errorlevel
         if (msgResult = "No")
             return -1
     }
@@ -209,18 +211,18 @@ createNewChildTopic(inheritance, smPID)
         ; Clear contents of the html component
         Send("{q}")
         Send("!{.}")
-        ErrorLevel := WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID)
         Send("{enter}")
-        ErrorLevel := WinWaitNotActive("ahk_class TMsgDialog ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive("ahk_class TMsgDialog ahk_pid " smPID)
         Send("!{SC029}")                  ; SC029 = § character
-        ErrorLevel := WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID)
         Send("{enter}")
-        ErrorLevel := WinWaitNotActive("ahk_class TMsgDialog ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive("ahk_class TMsgDialog ahk_pid " smPID)
     }
     else
     {
         Send("!{c}")
-        ErrorLevel := WinWaitActive("ahk_class TContents ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TContents ahk_pid " smPID)
         
         sendContextMenuCommand(465, smPID)
         WinClose("ahk_class TContents ahk_pid " smPID)
@@ -245,7 +247,7 @@ createNewChildTopic(inheritance, smPID)
 ; Input parameter:
 ;   refs - formatted string of references
 ;   choicesDlg - true: close TChoicesDlg if it shows up
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -257,22 +259,26 @@ setRef(refsString, choicesDlg, smPID)
     
     ; Open edit references window
     sendContextMenuCommand(660, smPID)
-    ErrorLevel := WinWaitActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     WinActivate("ahk_class TInputDlg ahk_pid " smPID)
-    ErrorLevel := WinWaitActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     
     ; Enter references
     A_Clipboard := ""
     A_Clipboard := refsString
-    Errorlevel := !ClipWait(1, 0)
+    if ( !ClipWait(1, 0) )
+    {
+        MsgBox("Clipboard failure.", "Error!", 0)
+        return
+    }
     safePasteText()
     Send("^{Enter}")
     
     if (choicesDlg == true)
     {
-        ErrorLevel := WinWaitActive("ahk_class TChoicesDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TChoicesDlg ahk_pid " smPID)
         Send("{enter}")
-        ErrorLevel := WinWaitNotActive("ahk_class TChoicesDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive("ahk_class TChoicesDlg ahk_pid " smPID)
     }
     
     ; Restore clipboard
@@ -320,7 +326,7 @@ safeCopyToClipboard(data, timeout := 1000)
 ;   Moves the text cursor to the end of an HTML component.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -339,7 +345,11 @@ moveCursorToEnd(smPID)
     
     Send("+{right}")
     Send("^{c}")
-    Errorlevel := !ClipWait(1, 0)
+    if ( !ClipWait(1, 0) )
+    {
+        MsgBox("Clipboard failure.", "Error!", 0)
+        return
+    }
     
     if (A_Clipboard == "#")
     {
@@ -351,7 +361,11 @@ moveCursorToEnd(smPID)
             Send("{up}")
             Send("+{end}")
             Send("^{c}")
-            Errorlevel := !ClipWait(1, 0)
+            if ( !ClipWait(1, 0) )
+            {
+                MsgBox("Clipboard failure.", "Error!", 0)
+                return
+            }
         }
         Send("{left}")
         Send("{up}")
@@ -376,10 +390,10 @@ moveCursorToEnd(smPID)
 ; --------------------
 ;
 ; Description:
-;   ---
+;   Removes the highlights that appear after a search has been made.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -392,10 +406,10 @@ clearSearchHighlights(smPID)
     safeActivateElementWindow(smPID)
     
     Send("^{enter}")
-    ErrorLevel := WinWaitActive("ahk_class TCommanderDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitActive("ahk_class TCommanderDlg ahk_pid " smPID)
     Send("highlight: clear")
     Send("{enter}")
-    ErrorLevel := WinWaitNotActive("ahk_class TCommanderDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitNotActive("ahk_class TCommanderDlg ahk_pid " smPID)
     return
 }
 
@@ -406,7 +420,7 @@ clearSearchHighlights(smPID)
 ;   Activates the element window in SM unless it is already active.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -437,8 +451,8 @@ safeActivateElementWindow(smPID)
 ;   be found using a software like Spy++.
 ;
 ; Input parameter:
-;   wParam - integer containing the command to send
-;   smPID - integer containing the process ID of SuperMemo
+;   wParam - the command to send
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---

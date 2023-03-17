@@ -12,9 +12,19 @@
 ;   easier perform various concept-related actions.
 ;
 ; Usage:
-;   Place this file in the same folder as "smahk.ahk".
-;   When run this script will display a GUI where a user can choose
-;   options.
+;   This script is meant to be executed from the main script (smahk.ahk)
+;   using the Run()-function. When run this script will display a GUI with
+;   the options shown below:
+;   - Create concept: Convert the current element to a concept
+;   - Link to concept: Add a link between the current element and a concept using the registry
+;   - Link to multiple concepts: Same as above but several times until the user presses "Esc".
+;   - Unlink concept: Remove a link between the current element and a concept using the registry
+;   - Link to element in contents window: Add a link between the current element
+;                                         and an element in the contents window
+;   - List links: Display the links of the current element in the browser
+;   - Set default concept group: Lets the user choose a concept to set as default concept.
+;   - Move to concept: Lets the user choose a concept to move the current element to.
+;   - Search for concept: Activates the search bar in the element window.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -43,7 +53,7 @@ InstallKeybdHook()                   ; Used for enabling A_PriorKey variable
 KeyHistory(2)                        ; Number of previous keypresses in history
 
 ; ******************************************************************************
-; ********************************* MAIN PROGRAM START *************************
+; ************************************ MAIN ************************************
 ; ******************************************************************************
 
 smPID := IniRead("..\smahk-settings.ini", "Settings", "smPID")
@@ -132,10 +142,6 @@ ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
 }
 
 ; ******************************************************************************
-; ********************************** MAIN PROGRAM END **************************
-; ******************************************************************************
-
-; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
 ; ******************************************************************************
 ; Function name: createConcept
@@ -147,7 +153,7 @@ ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
 ;   which has wParam value 643.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -167,7 +173,7 @@ createConcept(smPID)
 ;   which has wParam value 644.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -187,10 +193,10 @@ linkToConcept(smPID)
 ; --------------------
 ;
 ; Description:
-;   ---
+;   Calls the linkToConcept() function several times until the user presses esc.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -221,7 +227,7 @@ linkToMultConcepts(smPID)
 ;   which has wParam value 645.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -246,7 +252,7 @@ unlinkFromConcept(smPID)
 ;   which has wParam value 649.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -266,7 +272,7 @@ linkContents(smPID)
 ;   which has wParam value 652.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -284,7 +290,7 @@ listLinks(smPID)
 ;   Brings up the element parameter window and activates the concept dropdown.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -307,7 +313,7 @@ moveToConcept(smPID)
 ;   element window by sending a mouse click to the middle of the search bar.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -338,7 +344,7 @@ searchConcept(smPID)
 ;   in the element window.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---

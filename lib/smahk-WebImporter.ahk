@@ -9,18 +9,27 @@
 ; 
 ; Description:
 ;   A module that is part of the smahk script. It adds the functionality to
-;   import web articles into SuperMemo using any web browser.
+;   import web articles into SuperMemo using any web browser the user has
+;   specified in the smahk configuration.
 ;
 ; Usage:
-;   Place this file in the same folder as "smahk.ahk".
-;   When run this script will display a GUI where a user can choose
-;   options to import articles.
+;   This script is meant to be executed from the main script (smahk.ahk)
+;   using the Run()-function. When run this script will display a GUI with
+;   the options shown below:
+;   - Current tab: Imports the current open browser tab
+;   - All tabs: Imports all open browser tabs
+;   - Priority: Set the priority of the imported article(s)
+;   - Insert references: Inserts references for the imported article(s)
+;   - Close tab: Closes the browser tab after import
+;   - Import to child: Imports the article to the child of the current element
+;   - Import link only: Imports only the title and link of the article
+;   - Popup message on finish: Shows a messagebox when import is finished
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
+;   - Mozilla Firefox, version 102.9.0esr (64-bit)
 ;   - Windows 10
-;   - Mozilla Firefox, version 102.5.0
 ;
 ; Terms of use:
 ;   Copyright (C) 2023 andyjak
@@ -42,7 +51,7 @@ SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
 
 ; ******************************************************************************
-; ********************************* MAIN PROGRAM START *************************
+; ************************************ MAIN ************************************
 ; ******************************************************************************
 
 browserPID := WinGetPID("A")
@@ -100,10 +109,6 @@ ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
 }
 
 ; ******************************************************************************
-; ********************************** MAIN PROGRAM END **************************
-; ******************************************************************************
-
-; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
 ; ******************************************************************************
 
@@ -111,15 +116,16 @@ ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
 ; --------------------
 ;
 ; Description:
-;   Imports a browser tab to SuperMemo through copy-paste.
+;   Imports the contents of a browser tab to SuperMemo through copy-paste.
 ;   Beware, overwrites the content of the clipboard!
 ;
 ; Input parameter:
 ;   ref - Set to true if references shall be inserted
 ;   onlyLink - Set to true if only link shall be imported
 ;   importToChild - Set to true if importing to a child topic
-;   browserPID - integer containing the process ID of the web browser
-;   smPID - integer containing the process ID of SuperMemo
+;   prio - the priority of the imported article
+;   browserPID - the process ID of the running web browser
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -142,8 +148,7 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
         Send("^{a}")
         A_Clipboard := ""
         Send("^{c}")
-        Errorlevel := !ClipWait(3, 0)
-        if (ErrorLevel != 0)
+        if ( !ClipWait(3, 0) )
         {
             MsgBox("Unable to copy contents of webpage.", "Error!", 0)
             Return
@@ -199,16 +204,20 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
         
         ; set title
         Send("^+{p}")
-        ErrorLevel := WinWaitActive("ahk_class TElParamDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TElParamDlg ahk_pid " smPID)
         Send("{esc}")
-        ErrorLevel := WinWaitNotActive("ahk_class TElParamDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive("ahk_class TElParamDlg ahk_pid " smPID)
         PostMessage(0x0111, 116, , , "ahk_class TElWind ahk_pid " smPID)
         A_Clipboard := ""
         A_Clipboard := elementTitle
-        Errorlevel := !ClipWait(1, 0)
-        ErrorLevel := WinWaitActive("ahk_class TChoicesDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        if ( !ClipWait(1, 0) )
+        {
+            MsgBox("Clipboard failure.", "Error!", 0)
+            return
+        }
+        WinWaitActive("ahk_class TChoicesDlg ahk_pid " smPID)
         Send("{enter}")
-        ErrorLevel := WinWaitActive("ahk_class TTitleEdit ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_class TTitleEdit ahk_pid " smPID)
         safePasteText()
         Send("{enter}")
     }
@@ -217,20 +226,17 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
     {
         ; import link
         A_Clipboard := SubStr(refs[1], 9)
-        Errorlevel := !ClipWait(1, 0)
+        if ( !ClipWait(1, 0) )
+        {
+            MsgBox("Clipboard failure.", "Error!", 0)
+            return
+        }
         safePasteText()
         setRef(refsMerged, false, smPID)
     }
     
-    setPriority(prio, smPID)
-    
-    if (WinActive("ahk_class TElWind") == 0)
-    {
-        WinActivate("ahk_pid " smPID)
-        ErrorLevel := WinWaitActive("ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-        WinActivate("ahk_class TElWind ahk_pid " smPID)
-        ErrorLevel := WinWaitActive("ahk_class TElWind ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    }
+    setPriority(prio, smPID)    
+    safeActivateElementWindow(smPID)
     
     if (importToChild == true)
     {
@@ -242,11 +248,9 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
     
     ; Window switch to web browser
     WinActivate("ahk_pid " browserPID)
-    ErrorLevel := WinWaitActive("ahk_pid " browserPID, , 1) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    while (ErrorLevel != 0)
+    while ( !WinWaitActive("ahk_pid " browserPID,, 1) )
     {
         WinActivate("ahk_pid " browserPID)
-        ErrorLevel := WinWaitActive("ahk_pid " browserPID, , 1) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
     }
     
     Return
@@ -265,8 +269,9 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
 ;   onlyLink - Set to true if only link shall be imported
 ;   importToChild - Set to true if importing to a child topic
 ;   closeTab - Set to true if tab shall be closed after import
-;   browserPID - integer containing the process ID of the web browser
-;   smPID - integer containing the process ID of SuperMemo
+;   prio - the priority of the imported article
+;   browserPID - the process ID of the running web browser
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -276,7 +281,7 @@ importCurrentBrowserTab(ref, onlyLink, importToChild, closeTab, prio, browserPID
     if (WinActive("ahk_pid " . browserPID) == 0)
     {
         WinActivate("ahk_pid " browserPID)
-        ErrorLevel := WinWaitActive("ahk_pid " browserPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_pid " browserPID)
     }
     
     ; Save contents of clipboard
@@ -287,12 +292,14 @@ importCurrentBrowserTab(ref, onlyLink, importToChild, closeTab, prio, browserPID
     {
         previousTabTitle := WinGetTitle("A")
         Send("^{w}")
-        ErrorLevel := WinWaitNotActive(previousTabTitle) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive(previousTabTitle)
     }
 
     ; Restore clipboard
     A_Clipboard := ClipSaved
     ClipSaved := ""
+    
+    return
 }
 
 
@@ -307,8 +314,9 @@ importCurrentBrowserTab(ref, onlyLink, importToChild, closeTab, prio, browserPID
 ;   onlyLink - Set to true if only link shall be imported
 ;   importToChild - Set to true if importing to a child topic
 ;   closeTab - Set to true if tab shall be closed after import
-;   browserPID - integer containing the process ID of the web browser
-;   smPID - integer containing the process ID of SuperMemo
+;   prio - the priority of the imported article
+;   browserPID - the process ID of the running web browser
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -318,7 +326,7 @@ importAllBrowserTabs(ref, onlyLink, importToChild, closeTab, prio, browserPID, s
     if (WinActive("ahk_pid " . browserPID) == 0)
     {
         WinActivate("ahk_pid " browserPID)
-        ErrorLevel := WinWaitActive("ahk_pid " browserPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_pid " browserPID)
     }
     
     ; Save contents of clipboard
@@ -335,12 +343,14 @@ importAllBrowserTabs(ref, onlyLink, importToChild, closeTab, prio, browserPID, s
         else
             Send("^{tab}")
         
-        ErrorLevel := WinWaitNotActive(previousTabTitle) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitNotActive(previousTabTitle)
     }
 
     ; Restore clipboard
     A_Clipboard := ClipSaved
     ClipSaved := ""
+    
+    return
 }
 
 
@@ -395,7 +405,11 @@ getRef(refTitle, refDate, refLink)
         Sleep(50)
         A_Clipboard := ""
         Send("^{c}")
-        Errorlevel := !ClipWait(1, 0)
+        if ( !ClipWait(1, 0) )
+        {
+            MsgBox("Clipboard failure.", "Error!", 0)
+            return
+        }
         Send("{f6}")
         refs[3] := "#Link: " . A_Clipboard
         
@@ -432,7 +446,7 @@ getCurrentBrowserTabURL(wTitle)
     if (WinActive(wTitle) == 0)
     { 
         WinActivate(wTitle)
-        ErrorLevel := WinWaitActive(wTitle) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive(wTitle)
     }
     
     while ( (A_Clipboard == "") AND (ErrorLevel != 0) )
@@ -460,7 +474,7 @@ getCurrentBrowserTabURL(wTitle)
 ;   Traverses each tab in the active web browser and returns the URL as a list.
 ;
 ; Input parameter:
-;   browserPID - integer containing the process ID of the web browser
+;   browserPID - the process ID of the running web browser
 ;
 ; Return:
 ;   url_list - List of urls
@@ -493,7 +507,7 @@ getAllBrowserTabURLs(browserPID)
             url_list .= url "`n"
             activeTabName := WinGetTitle("A")
             Send("^{tab}")
-            ErrorLevel := WinWaitNotActive(activeTabName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitNotActive(activeTabName)
         }
         
         ; Restore clipboard
@@ -517,7 +531,7 @@ getAllBrowserTabURLs(browserPID)
 ;   ---
 ;
 ; Return:
-;   ---
+;   tabCount - contains the number of tabs
 ;
 getTabCount()
 {
@@ -527,7 +541,7 @@ getTabCount()
     Loop
     {
         Send("^{tab}")
-        ErrorLevel := WinWaitNotActive(current_title, , 1) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        ErrorLevel := WinWaitNotActive(current_title,, 1) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
         current_title := WinGetTitle("A")
         
         if ( (ErrorLevel != 0) OR (current_title == first_title) )

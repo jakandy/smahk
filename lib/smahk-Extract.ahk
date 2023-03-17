@@ -12,10 +12,11 @@
 ;   extract text or images from different sources and import them into SuperMemo.
 ;
 ; Usage:
-;   Place this file in any directory and include it to your script using
-;   the #include directive. Then you can call any function as normal.
-;   Read the header of each function for more info about
-;   what they do and how to use them.
+;   Place this file in the same directory as "smahk-lib.ahk" and include it
+;   to your script using the #include directive. After that you can call
+;   any function as normal.
+;   Please read the header of each function for more info about what they do and
+;   how to use them.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -36,27 +37,31 @@
 
 #Requires AutoHotkey v2.0
 #Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
-; TODO: add timeouts to all winwait
 
+
+; ******************************************************************************
+; ************************************* FUNCTIONS ******************************
+; ******************************************************************************
 ; Function name: anyExtract
 ; --------------------
 ;
 ; Description:
-;   Makes an "extract" by copying a text selection from an application,
+;   Makes an "extract" by copying a highlighted text selection from an application,
 ;   duplicates the current element in SuperMemo, clears its contents and
 ;   pastes the extracted text there.
+;   If no text has been highlighted, Windows snipping tool will start and prompt the
+;   user to draw a rectangle on the screen. When the user has done that,
+;   a topic containing an image will be created.
 ;
 ; Input parameter:
 ;   target - integer, set to 0 if creating new extract, 1 if appending
 ;            to previous extract and 2 if appending to current extract
-;   highlightKey - string that contains the keyboard shortcut for highlighting
-;                  the text during extract. Set to "" if no highlighting.
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
 ;
-anyExtract(target, highlightKey, smPID)
+anyExtract(target, smPID)
 {
     ; Save contents of clipboard
     ClipSaved := ClipboardAll()
@@ -64,18 +69,16 @@ anyExtract(target, highlightKey, smPID)
     
     ; Copy content
     Send("^{c}")
-    Errorlevel := !ClipWait(1, 0)
     
-    if (ErrorLevel != 0)
+    if !ClipWait(1, 0)
     {
         ; User has not made a text selection, start snipping tool
         Send("#+{s}")
-        ErrorLevel := WinWaitActive("ahk_exe ScreenClippingHost.exe") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+        WinWaitActive("ahk_exe ScreenClippingHost.exe")
         Sleep(50)
-        ErrorLevel := WinWaitNotActive("ahk_exe ScreenClippingHost.exe") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-        Errorlevel := !ClipWait(1, 1)
+        WinWaitNotActive("ahk_exe ScreenClippingHost.exe")
 
-        if (ErrorLevel != 0)
+        if !ClipWait(1, 1)
         {
             ; User has aborted image clip
             A_Clipboard := ClipSaved
@@ -93,19 +96,10 @@ anyExtract(target, highlightKey, smPID)
         ; User has made a text selection
         imageExtract := false
         
-        if (highlightKey != "")
-        {
-            ; highlight text
-            Send(highlightKey)
-            Sleep(500)
-        }
     }
     
     ; Window switch to SM
-    WinActivate("ahk_pid " smPID)
-    ErrorLevel := WinWaitActive("ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    WinActivate("ahk_class TElWind ahk_pid " smPID)
-    ErrorLevel := WinWaitActive("ahk_class TElWind ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    safeActivateElementWindow(smPID)
     
     if (target == 0)
     {
@@ -156,32 +150,32 @@ anyExtract(target, highlightKey, smPID)
         {
             ; set template
             Send("^+{m}")
-            ErrorLevel := WinWaitActive("ahk_class TRegistryForm ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitActive("ahk_class TRegistryForm ahk_pid " smPID)
             Send("article picture")
             Send("{enter}")
             
-            ErrorLevel := WinWaitNotActive("ahk_class TRegistryForm ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-            ErrorLevel := WinWaitActive("ahk_class TElWind ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitNotActive("ahk_class TRegistryForm ahk_pid " smPID)
+            WinWaitActive("ahk_class TElWind ahk_pid " smPID)
             
             ; paste image
             Send("^{v}")
-            ErrorLevel := WinWaitActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
             Send("{Enter}")
-            ErrorLevel := WinWaitNotActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitNotActive("ahk_class TInputDlg ahk_pid " smPID)
         }
         else
         if ( (target == 1) OR (target == 2) )
         {
             ; paste image
             Send("^{v}")
-            ErrorLevel := WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitActive("ahk_class TMsgDialog ahk_pid " smPID)
             Send("{enter}")
             while ( (WinActive("ahk_class TChoicesDlg") == 0) AND (WinActive("ahk_class TMsgDialog") == 0) )
                 Sleep(50)
             Send("{enter}")
-            ErrorLevel := WinWaitActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
             Send("{enter}")
-            ErrorLevel := WinWaitNotActive("ahk_class TInputDlg ahk_pid " smPID) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+            WinWaitNotActive("ahk_class TInputDlg ahk_pid " smPID)
         }
     }
     else

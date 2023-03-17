@@ -10,12 +10,15 @@
 ; Description:
 ;   A module that is part of the smahk script. It adds the functionality to
 ;   backup the collection to a directory called "backup", located in the same
-;   directory as the SuperMemo exe.
+;   directory as sm18.exe.
 ;
 ; Usage:
-;   This script is meant to be called from another script
+;   This script is meant to be executed from the main script (smahk.ahk)
 ;   using the Run()-function. A messagebox will appear prompting the user
 ;   to start the backup process.
+;   It essentially just copies the entire collection and pastes it to another
+;   directory, nothing fancy. When the collection has successfully been backed up,
+;   a confirmation messagebox will appear.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -39,10 +42,9 @@ SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
 
 ; ******************************************************************************
-; ********************************* MAIN PROGRAM START *************************
+; ************************************ MAIN ************************************
 ; ******************************************************************************
 knoPathKno := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
@@ -59,11 +61,10 @@ msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up i
 if (msgResult = "No")
     ExitApp()
     
-ErrorLevel := ProcessExist(smProcessName)
-if (ErrorLevel != 0)
+if (ProcessExist(smProcessName))
 {
     WinClose("ahk_exe " smProcessName)
-    ErrorLevel := WinWaitClose("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitClose("ahk_exe " smProcessName)
     Sleep(1000)
 }
 
@@ -72,16 +73,22 @@ SplitPath(SourceFolder, &SourceFolderName)
 currentTime := FormatTime("A_Now", "yyyy-MM-dd HH-mm")
 
 ; TODO: add a progress bar
-Try{
+Try
+{
    DirCopy(SourceFolder, TargetFolder "\" currentTime "\" SourceFolderName)
    ErrorLevel := 0
-} Catch {
+}
+Catch
+{
    ErrorLevel := 1
 }
-Try{
+Try
+{
    FileCopy(knoPathKno, TargetFolder "\" currentTime)
    ErrorLevel := 0
-} Catch as Err {
+}
+Catch as Err
+{
    ErrorLevel := Err.Extra
 }
 
@@ -95,5 +102,5 @@ else
     if (msgResult = "Yes")
         Run("..\smahk.ahk")
 }
-    
+
 ExitApp()

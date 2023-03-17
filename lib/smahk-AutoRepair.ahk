@@ -13,10 +13,9 @@
 ;   It is meant to be run at a scheduled time, using Windows Task Scheduler.
 ;
 ; Usage:
-;   Place this file in the same directory as the other files for smahk.
-;   Add at the top of your script: "#Include smahk-WebImporter.ahk" without
-;   quotes. When run this script will display a GUI where a user can choose
-;   options to import articles.
+;   This script is meant to be executed from the main script (smahk.ahk)
+;   using the Run()-function. When run this script will automatically
+;   run the in-built repair utility in SuperMemo.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -42,8 +41,10 @@ SetWorkingDir(A_ScriptDir)
 SetKeyDelay(0, 10)
 
 ; ******************************************************************************
-; ********************************* MAIN PROGRAM START *************************
+; ************************************ MAIN ************************************
 ; ******************************************************************************
+detailedRepair := true              ; set to false if to run basic repair
+
 knoPath := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
 if ( (knoPath == "") OR (smProcessName == "") )
@@ -52,20 +53,34 @@ if ( (knoPath == "") OR (smProcessName == "") )
     ExitApp()
 }
 
-ErrorLevel := ProcessExist(smProcessName)
-if (ErrorLevel != 0)
+if (ProcessExist(smProcessName))
 {
     WinClose("ahk_exe " smProcessName)
-    ErrorLevel := WinWaitClose("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitClose("ahk_exe " smProcessName)
 }
 
 Run(knoPath)
-ErrorLevel := WinWait("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-ErrorLevel := WinWaitActive("ahk_class TElWind", , 5) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-if (ErrorLevel != 0)
+WinWait("ahk_exe " smProcessName)
+if ( !WinWaitActive("ahk_class TElWind",, 5) )
     ExitApp()
-autoRepairCollection(true)
-ErrorLevel := WinWaitActive("ahk_exe notepad++.exe") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+Send("^{f12}")
+WinWaitActive("ahk_class TRecoveryDialog")
+Sleep(10000)
+if (detailedRepair == true)
+{
+    Send("{down}")
+    Sleep(1000)
+    Send("{down}")
+    Sleep(1000)
+    Send("{Enter}")
+    Sleep(1000)
+    Send("{up}")
+    Sleep(1000)
+    Send("{up}")
+}
+Sleep(1000)
+Send("{enter}")
+WinWaitActive("ahk_exe notepad++.exe")
 Sleep(3000)
 Send("!{tab}")
 Sleep(5000)
@@ -74,57 +89,17 @@ Sleep(5000)
 if ( WinActive("ahk_class TMsgDialog", "Error!") == 0 )
 {
     WinActivate("ahk_exe " smProcessName)
-    ErrorLevel := WinWaitActive("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitActive("ahk_exe " smProcessName)
     WinActivate("ahk_class TElWind")
-    ErrorLevel := WinWaitActive("ahk_class TElWind", , 5) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    if (ErrorLevel != 0)
+    if ( !WinWaitActive("ahk_class TElWind", , 5) )
     {
         MsgBox("Could not activate element window.", "Error!", 0)
         ExitApp()
     }
     Sleep(3000)
     Send("!{f4}")
-    ErrorLevel := WinWaitClose("ahk_exe " smProcessName) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
+    WinWaitClose("ahk_exe " smProcessName)
     Sleep(1000)
 }
 
 ExitApp()
-
-; ******************************************************************************
-; ********************************** MAIN PROGRAM END **************************
-; ******************************************************************************
-
-; Function name: autoRepairCollection
-; --------------------
-;
-; Description:
-;   ---
-;
-; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
-;
-; Return:
-;   ---
-;
-autoRepairCollection(detailed)
-{
-    Send("^{f12}")
-    ErrorLevel := WinWaitActive("ahk_class TRecoveryDialog") , ErrorLevel := ErrorLevel = 0 ? 1 : 0
-    Sleep(10000)
-    if (detailed == true)
-    {
-        Send("{down}")
-        Sleep(1000)
-        Send("{down}")
-        Sleep(1000)
-        Send("{Enter}")
-        Sleep(1000)
-        Send("{up}")
-        Sleep(1000)
-        Send("{up}")
-    }
-    Sleep(1000)
-    Send("{enter}")
-    
-    return
-}

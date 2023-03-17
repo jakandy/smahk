@@ -14,9 +14,10 @@
 ;
 ; Usage:
 ;   Place this file in the same directory as "smahk-lib.ahk" and include it
-;   to your script using the #include directive. Then you can call any function
-;   as normal. Read the header of each function for more info about
-;   what they do and how to use them.
+;   to your script using the #include directive. After that you can call
+;   any function as normal.
+;   Please read the header of each function for more info about what they do and
+;   how to use them.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -45,18 +46,17 @@ SetKeyDelay(0, 10)
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
 ; ******************************************************************************
-
 ; Function name: markCurrentElement
 ; --------------------
 ;
 ; Description:
-;   ---
+;   Returns the number (integer) of the current element.
 ;
 ; Input parameter:
-;   ---
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
-;   ---
+;   markedElement - the number of the element to mark
 ;
 markCurrentElement(smPID)
 {
@@ -92,10 +92,11 @@ markCurrentElement(smPID)
 ; --------------------
 ;
 ; Description:
-;   ---
+;   Navigates to a current element.
 ;
 ; Input parameter:
-;   ---
+;   elementnr - the number of the element
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---

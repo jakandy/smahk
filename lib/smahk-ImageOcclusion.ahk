@@ -13,10 +13,11 @@
 ;   in the current element.
 ;
 ; Usage:
-;   Place this file in any directory and include it to your script using
-;   the #include directive. Then you can call any function as normal.
-;   Read the header of each function for more info about
-;   what they do and how to use them.
+;   Place this file in the same directory as "smahk-lib.ahk" and include it
+;   to your script using the #include directive. After that you can call
+;   any function as normal.
+;   Please read the header of each function for more info about what they do and
+;   how to use them.
 ;
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -38,7 +39,9 @@
 #Requires AutoHotkey v2.0
 #Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
 
-
+; ******************************************************************************
+; ************************************* FUNCTIONS ******************************
+; ******************************************************************************
 ; Function name: imageOcclusion
 ; --------------------
 ;
@@ -46,7 +49,7 @@
 ;   Creates an image occlusion item based on the image in the current element.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
 ;   ---
@@ -62,7 +65,7 @@ imageOcclusion(smPID)
     Send("!{d}")
     waitElement(parentName, smPID)
 
-    ; Find and select the first order image component
+    ; Find and select the first image component
     detectImageComponent(smPID)
 
     ; Set image component to filled
@@ -103,10 +106,11 @@ imageOcclusion(smPID)
 ;   by opening and closing the "Process images" dialog.
 ;
 ; Input parameter:
-;   smPID - integer containing the process ID of SuperMemo
+;   smPID - the process ID of the SuperMemo process that has the collection open
 ;
 ; Return:
-;   0 - if no component is found
+;   0 - if no image component is found the current element
+;   1 - if an image component is found the current element
 ;
 detectImageComponent(smPID)
 {
@@ -121,5 +125,5 @@ detectImageComponent(smPID)
     }
     Send("{Escape}")
     WinWaitNotActive("ahk_class TChoicesDlg ahk_pid " . smPID)
-    return
+    return 1
 }
