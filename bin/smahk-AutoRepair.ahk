@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Auto Repair module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -40,9 +40,6 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
 
-; ******************************************************************************
-; ************************************ MAIN ************************************
-; ******************************************************************************
 detailedRepair := true              ; set to false if to run basic repair
 
 knoPath := IniRead("..\smahk-settings.ini", "Settings", "knoPath")

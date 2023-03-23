@@ -2,7 +2,7 @@
 ;   SuperMemo AHK
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -37,9 +37,9 @@
 SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
-#Include <smahk-Extract>         ; Module for the extract functionality
-#Include <smahk-ImageOcclusion>  ; Module for image occlusion functions
-#Include <smahk-MarkAndRecall>   ; Module for mark and recall functions
+#Include <smahk-lib-Extract>         ; Module for the extract functionality
+#Include <smahk-lib-ImageOcclusion>  ; Module for image occlusion functions
+#Include <smahk-lib-MarkAndRecall>   ; Module for mark and recall functions
 
 ; ******************************************************************************
 ; ********************************** SETTINGS **********************************
@@ -56,7 +56,7 @@ if ( (knoPath == "") OR (smProcessName == "") OR (browserProcessName == "") )
     GoTo("Configuration")
 
 ; ******************************************************************************
-; ************************************ MAIN ************************************
+; ************************************ INIT ************************************
 ; ******************************************************************************
 ; Start SM unless already running
 if ( WinExist("ahk_exe " . smProcessName) == 0 )
@@ -68,10 +68,15 @@ else
 WinWait("ahk_pid " smPID)
 IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
 Sleep(3000)
+GoTo("Main")
 
-; Terminate script when SM closes
-WinWaitClose("ahk_pid " smPID)
-ExitApp()
+; ******************************************************************************
+; ************************************ MAIN ************************************
+; ******************************************************************************
+Main:
+    ; Wait for close event
+    WinWaitClose("ahk_pid " smPID)
+    ExitApp()
 
 ; ******************************************************************************
 ; ************************* GENERAL KEYBOARD SHORTCUTS *************************
@@ -120,7 +125,7 @@ ExitApp()
 ^!i::
 {
     IniWrite(smPID, "smahk-settings.ini", "Settings", "smPID")
-    Run("lib\smahk-WebImporter.ahk")
+    Run("bin\smahk-WebImporter.ahk")
     return
 }
 
@@ -167,7 +172,7 @@ ExitApp()
 {
     KeyWait("ctrl")
     KeyWait("alt")
-    Run("lib\smahk-ConceptMenu.ahk")
+    Run("bin\smahk-ConceptMenu.ahk")
     Return
 }
 
@@ -185,7 +190,7 @@ ExitApp()
 {
     KeyWait("ctrl")
     KeyWait("alt")
-    Run("lib\smahk-Backup.ahk")
+    Run("bin\smahk-Backup.ahk")
     return
 }
 
@@ -193,7 +198,7 @@ ExitApp()
 {
     KeyWait("ctrl")
     KeyWait("alt")
-    markedEl := markCurrentElement(smPID)
+    markedEl := markElement(smPID)
     IniWrite(markedEl, "smahk-settings.ini", "Settings", "markedElement")
     return
 }
@@ -207,7 +212,7 @@ ExitApp()
     if (markedEl == "")
         MsgBox("No element has been marked.", "Error!", 0)
     else
-        recallMarkedElement(markedEl, smPID)
+        recallElement(markedEl, smPID)
     
     Return
 }
@@ -288,7 +293,7 @@ ExitApp()
 ; ************************** CONFIGURATION SUBROUTINE **************************
 ; ******************************************************************************
 Configuration:
-    ; TODO: add option to change keyboard bindings for smahk
+    ; TODO: add option to change default keyboard bindings for smahk
 
     if not FileExist("smahk-settings.ini")
         FileAppend("", "smahk-settings.ini")

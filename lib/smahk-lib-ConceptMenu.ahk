@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Concept menu module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -48,98 +48,9 @@ SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
-#Include "smahk-lib.ahk"             ; Custom subroutines used in the script.
+#Include "smahk-lib.ahk"
 InstallKeybdHook()                   ; Used for enabling A_PriorKey variable
 KeyHistory(2)                        ; Number of previous keypresses in history
-
-; ******************************************************************************
-; ************************************ MAIN ************************************
-; ******************************************************************************
-
-smPID := IniRead("..\smahk-settings.ini", "Settings", "smPID")
-
-; Show concept menu GUI
-myGui := Gui(, "SuperMemo AHK Concept Menu")
-myGui.OnEvent("Escape", ButtonCancel.Bind("Normal", myGui))
-myGui.Add("Text", , "Concept options:")
-myGui.Add("Radio", "checked vUIConceptCreate", "&Create concept")
-myGui.Add("Radio", "vUIConceptLink", "&Link to concept")
-myGui.Add("Radio", "vUIConceptLinkMult", "Link to mul&tiple concepts")
-myGui.Add("Radio", "vUIConceptUnlink", "&Unlink from concept")
-myGui.Add("Radio", "vUIConceptLinkContents", "L&ink to element in contents window")
-myGui.Add("Radio", "vUIConceptListLinks", "Li&st links")
-myGui.Add("Radio", "vUIConceptSet", "Set &default concept group")
-myGui.Add("Radio", "vUIConceptMove", "&Move to concept")
-myGui.Add("Radio", "vUIConceptSearch", "Searc&h for concept")
-ogcButtonOK := myGui.Add("Button", "default xm", "&OK")
-ogcButtonOK.OnEvent("Click", ButtonOK.Bind("Normal"))
-ogcButtonCancel := myGui.Add("Button", "x+m", "C&ancel")
-ogcButtonCancel.OnEvent("Click", ButtonCancel.Bind("Normal"))
-myGui.Show()
-
-; User has pressed OK
-ButtonOK(A_GuiEvent, GuiCtrlObj, Info, *)
-{
-    oSaved := myGui.Submit()
-    
-    if (oSaved.UIConceptCreate == 1)
-    {
-        createConcept(smPID)
-    }
-    else
-    if (oSaved.UIConceptLink == 1)
-    {
-        linkToConcept(smPID)
-    }
-    else
-    if (oSaved.UIConceptLinkMult == 1)
-    {
-        linkToMultConcepts(smPID)
-    }
-    else
-    if (oSaved.UIConceptUnlink == 1)
-    {
-        unlinkFromConcept(smPID)
-    }
-    else
-    if (oSaved.UIConceptLinkContents == 1)
-    {
-        linkContents(smPID)
-    }
-    else
-    if (oSaved.UIConceptListLinks == 1)
-    {
-        listLinks(smPID)
-    }
-    else
-    if (oSaved.UIConceptMove == 1)
-    {
-        moveToConcept(smPID)
-    }
-    else
-    if (oSaved.UIConceptSearch == 1)
-    {
-        searchConcept(smPID)
-    }
-    else
-    if (oSaved.UIConceptSet == 1)
-    {
-        setDefaultConcept(smPID)
-    }
-    else
-    {
-        MsgBox("No choice selected.", "Error!", 0)
-        ExitApp()
-    }
-
-    ExitApp()
-}
-
-; User has pressed cancel or esc
-ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
-{
-    ExitApp()
-}
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
@@ -203,14 +114,19 @@ linkToConcept(smPID)
 ;
 linkToMultConcepts(smPID)
 {
-    ; TODO: fix bug when clicking on close window or searching from reg window
+    ; TODO: fix bug when clicking on close window
     while ( (A_Index == 1) OR (A_PriorKey != "Escape") )
     {
         listLinks(smPID)
         WinWaitActive("ahk_class TBrowser ahk_pid " smPID)
         sendContextMenuCommand(644, smPID)
         WinWaitActive("ahk_class TRegistryForm ahk_pid " smPID)
-        WinWaitClose("ahk_class TRegistryForm ahk_pid " smPID)
+        
+        while !WinWaitClose("ahk_class TRegistryForm ahk_pid " smPID,, 0.5)
+        {
+            if WinActive("ahk_class TMyFindDlg")
+                return
+        }
         KeyWait("Escape")
         Sleep(100)
     }

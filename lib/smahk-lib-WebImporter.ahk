@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Web Importer module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -48,65 +48,7 @@ SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
-
-; ******************************************************************************
-; ************************************ MAIN ************************************
-; ******************************************************************************
-
-browserPID := WinGetPID("A")
-smPID := IniRead("..\smahk-settings.ini", "Settings", "smPID")
-
-; show import options GUI
-myGui := Gui(, "SuperMemo AHK Web Importer")
-myGui.OnEvent("Escape", ButtonCancel.Bind("Normal", myGui))
-myGui.Add("Text", , "Import to SuperMemo:")
-ogcRadioUIWebCur := myGui.Add("Radio", "checked vUIWebCur", "&Current tab")
-ogcRadioUIWebAll := myGui.Add("Radio", "vUIWebAll", "A&ll tabs")
-myGui.Add("Text", , "&Priority:")
-myGui.Add("Edit")
-ogcUpDownUIprio := myGui.Add("UpDown", "vUIprio Range0-100", "50")
-ogcCheckboxUIRef := myGui.Add("Checkbox", "checked vUIRef", "Insert &references")
-ogcCheckboxUICloseTab := myGui.Add("Checkbox", "vUICloseTab", "Clo&se tab")
-ogcCheckboxUIChild := myGui.Add("Checkbox", "vUIChild", "Import to c&hild")
-ogcCheckboxUIOnlyLink := myGui.Add("Checkbox", "vUIOnlyLink", "Import lin&k only")
-ogcCheckboxUIPopup := myGui.Add("Checkbox", "vUIPopup", "Pop&up message on finish")
-ogcButtonOK := myGui.Add("Button", "default xm", "&OK")
-ogcButtonOK.OnEvent("Click", ButtonOK.Bind("Normal"))
-ogcButtonCancel := myGui.Add("Button", "x+m", "C&ancel")
-ogcButtonCancel.OnEvent("Click", ButtonCancel.Bind("Normal"))
-myGui.Show()
-
-ButtonOK(A_GuiEvent, GuiCtrlObj, Info, *)
-{
-    oSaved := myGui.Submit()
-    
-    if (oSaved.UIWebCur == 1)
-    {
-        importCurrentBrowserTab(oSaved.UIRef, oSaved.UIOnlyLink, oSaved.UIChild, oSaved.UICloseTab, oSaved.UIprio, browserPID, smPID)
-    }
-    else
-    if (oSaved.UIWebAll == 1)
-    {
-        importAllBrowserTabs(oSaved.UIRef, oSaved.UIOnlyLink, oSaved.UIChild, oSaved.UICloseTab, oSaved.UIprio, browserPID, smPID)
-    }
-    else
-    {
-        MsgBox("No choice selected.", "Error!", 0)
-        ExitApp()
-    }
-    
-    Sleep(500)
-    if (oSaved.UIPopup == 1)
-        MsgBox("Import has finished.", "Success!", 0)
-
-    ExitApp()
-}
-
-ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
-{
-    ExitApp()
-}
+#Include "smahk-lib.ahk"
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************

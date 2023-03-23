@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Mark and Recall module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -10,7 +10,7 @@
 ; Description:
 ;   A module that is part of the smahk script. It is a library containing functions to
 ;   save the number of an element (mark) that you want to come back to later (recall).
-;   (Yes, it is named after the magic spell from Morrowind ;) )
+;   (Yes, it is named after the magic spell from TES III: Morrowind ;) )
 ;
 ; Usage:
 ;   Place this file in the same directory as "smahk-lib.ahk" and include it
@@ -41,12 +41,12 @@ SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
+#Include "smahk-lib.ahk"
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
 ; ******************************************************************************
-; Function name: markCurrentElement
+; Function name: markElement
 ; --------------------
 ;
 ; Description:
@@ -58,7 +58,7 @@ SetKeyDelay(0, 10)
 ; Return:
 ;   markedElement - the number of the element to mark
 ;
-markCurrentElement(smPID)
+markElement(smPID)
 {
     ; Save contents of clipboard
     ClipSaved := ClipboardAll()
@@ -88,11 +88,11 @@ markCurrentElement(smPID)
     Return markedElement
 }
 
-; Function name: recallMarkedElement
+; Function name: recallElement
 ; --------------------
 ;
 ; Description:
-;   Navigates to a current element.
+;   Navigates to a certain element using its element number.
 ;
 ; Input parameter:
 ;   elementnr - the number of the element
@@ -101,7 +101,7 @@ markCurrentElement(smPID)
 ; Return:
 ;   ---
 ;
-recallMarkedElement(elementnr, smPID)
+recallElement(elementnr, smPID)
 {
     safeActivateElementWindow(smPID)
     Send("^{g}")

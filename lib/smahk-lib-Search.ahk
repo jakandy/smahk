@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Search module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -13,10 +13,13 @@
 ;   It is meant to be run using an application launcher, e.g. Keypirinha.
 ;
 ; Usage:
-;   Run this script with your search string as command arguments, ex:
+;   This script takes in a string as a command line argument, for example:
 ;   smahk-Search.ahk "search string"
 ;   or
 ;   smahk-Search.ahk search string
+;   An application launcher can then be set up to launch this script
+;   with a custom search command. Read the docs of your application launcher
+;   on how to do this.
 ;   
 ; Tested with:
 ;   - SuperMemo, version 18.05
@@ -41,41 +44,7 @@ SendMode("Input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
-
-; ******************************************************************************
-; ************************************ MAIN ************************************
-; ******************************************************************************
-searchstring := parseCmdArg()
-
-if (searchstring == "")
-{
-    MsgBox("Empty search string.", "Error!", 0)
-    ExitApp()
-}
-
-; Supermemo settings
-smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
-if (smProcessName == "ERROR")
-{
-    MsgBox("Could not find path to SuperMemo executable.", "Error!", 0)
-    ExitApp()
-}
-
-; Start SM unless already running
-if ( WinExist("ahk_exe " . smProcessName) == 0 )
-{
-    Run("..\smahk.ahk")
-    WinWaitActive("ahk_exe " . smProcessName)
-    smPID := WinGetPID("ahk_exe " . smProcessName)
-}
-else
-{
-    smPID := WinGetPID("ahk_exe " . smProcessName)
-}
-
-findElement(searchstring, smPID)
-ExitApp()
+#Include "smahk-lib.ahk"
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************

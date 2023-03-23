@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Image Occlusion module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -37,7 +37,7 @@
 ;
 
 #Requires AutoHotkey v2.0
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
+#Include "smahk-lib.ahk"
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************

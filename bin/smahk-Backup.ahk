@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Backup module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -43,9 +43,6 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
 
-; ******************************************************************************
-; ************************************ MAIN ************************************
-; ******************************************************************************
 knoPathKno := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")
 if ( (knoPathKno == "") OR (smProcessName == "") )
@@ -57,7 +54,7 @@ if ( (knoPathKno == "") OR (smProcessName == "") )
 SourceFolder := SubStr(knoPathKno, 1, -4)
 TargetFolder := SubStr(knoPathKno, 1, InStr(knoPathKno, "\systems\", , -2)) . "backup"
 
-msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder "`n`n(Be aware that SuperMemo will be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
+msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder "`n`n(Be aware that the process is currently performed silently without a progress bar. SuperMemo will also be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
 if (msgResult = "No")
     ExitApp()
     

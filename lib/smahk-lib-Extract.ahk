@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Extract module
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
@@ -36,8 +36,7 @@
 ;
 
 #Requires AutoHotkey v2.0
-#Include "smahk-lib.ahk"         ; Custom subroutines used in the script.
-
+#Include "smahk-lib.ahk"
 
 ; ******************************************************************************
 ; ************************************* FUNCTIONS ******************************
@@ -48,10 +47,10 @@
 ; Description:
 ;   Makes an "extract" by copying a highlighted text selection from an application,
 ;   duplicates the current element in SuperMemo, clears its contents and
-;   pastes the extracted text there.
-;   If no text has been highlighted, Windows snipping tool will start and prompt the
-;   user to draw a rectangle on the screen. When the user has done that,
-;   a topic containing an image will be created.
+;   pastes the extracted text there. If no text has been highlighted,
+;   Windows snipping tool will start and prompt the user to draw a rectangle
+;   on the screen. When the user has done that, a topic containing an image
+;   will be created.
 ;
 ; Input parameter:
 ;   target - integer, set to 0 if creating new extract, 1 if appending

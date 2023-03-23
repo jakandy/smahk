@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - AutoHotkey library
 ;
 ; Version:
-;   v1.00, 03/2023
+;   v1.0.0, 03/2023
 ;
 ; Author:
 ;   andyjak
