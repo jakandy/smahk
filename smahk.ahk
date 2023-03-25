@@ -309,6 +309,7 @@ Configuration:
     ; show import options GUI
     myGui := Gui(, "SuperMemo AHK Configuration")
     myGui.OnEvent("Escape", ButtonCancel.Bind("Normal", myGui))
+    myGui.OnEvent("Close", ButtonCancel.Bind("Normal", myGui))
     myGui.Add("Text", "xm", "SuperMemo Collection path:")
     ogcEditUIknoPath := myGui.Add("Edit", "r1 vUIknoPath w135", knoPath)
     ogcButtonBrowse := myGui.Add("Button", "x+m", "Browse")
@@ -360,5 +361,7 @@ Configuration:
 
     ButtonCancel(A_GuiEvent, GuiCtrlObj, Info, *)
     {
+        FileDelete("smahk-settings.ini")
         ExitApp()
     }
+    
