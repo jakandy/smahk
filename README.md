@@ -23,8 +23,6 @@ Run "smahk.ahk" when you want to start SuperMemo AHK. Your SuperMemo installatio
 
 When both the script and SuperMemo is running, press any of the below hotkeys to perform the associated action.
 
-Closing SuperMemo will automatically terminate the smahk script.
-
 ### General hotkeys (can be invoked from any application):
 - Ctrl-Alt-X: Extract text or image into new child topic
 - Ctrl-Shift-X: Extract text or image into previous topic
@@ -44,6 +42,10 @@ Closing SuperMemo will automatically terminate the smahk script.
 - Ctrl-Alt-Enter: Mark the current element
 - Ctrl-Alt-Backspace: Go to marked element
 - Ctrl-Alt-f12: Backup collection
+
+More usage information can be found inside of the script files themselves.
+
+Closing SuperMemo will automatically terminate the smahk script.
 
 ## Tested with
 - SuperMemo, version 18.05
