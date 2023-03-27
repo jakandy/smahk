@@ -26,7 +26,7 @@ When both the script and SuperMemo is running, press any of the below hotkeys to
 Closing SuperMemo will automatically terminate the smahk script.
 
 ### General hotkeys (can be invoked from any application):
-- Ctrl-Alt-X: Extract text or image into new topic
+- Ctrl-Alt-X: Extract text or image into new child topic
 - Ctrl-Shift-X: Extract text or image into previous topic
 - Alt-Shift-X: Extract text or image into current topic
 - Alt-Esc: Terminate smahk script

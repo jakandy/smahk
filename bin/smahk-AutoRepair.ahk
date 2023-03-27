@@ -40,7 +40,7 @@ SetWorkingDir(A_ScriptDir)
 #SingleInstance ignore
 SetKeyDelay(0, 10)
 
-detailedRepair := true              ; set to false if to run basic repair
+detailedRepair := true              ; set to false to run basic repair
 
 knoPath := IniRead("..\smahk-settings.ini", "Settings", "knoPath")
 smProcessName := IniRead("..\smahk-settings.ini", "Settings", "smProcessName")

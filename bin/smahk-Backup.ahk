@@ -54,7 +54,7 @@ if ( (knoPathKno == "") OR (smProcessName == "") )
 SourceFolder := SubStr(knoPathKno, 1, -4)
 TargetFolder := SubStr(knoPathKno, 1, InStr(knoPathKno, "\systems\", , -2)) . "backup"
 
-msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder "`n`n(Be aware that the process is currently performed silently without a progress bar. SuperMemo will also be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
+msgResult := MsgBox("The collection in:`n" SourceFolder "`n`nwill be backed up into:`n" TargetFolder "`n`n(Be aware that the process is performed silently without a progress bar. SuperMemo will also be closed during the process) `n `nContinue?", "SuperMemo AHK Backup", 4)
 if (msgResult = "No")
     ExitApp()
     
