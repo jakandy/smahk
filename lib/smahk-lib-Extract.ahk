@@ -103,7 +103,9 @@ anyExtract(target, smPID)
     if (target == 0)
     {
         ; create new extract
-        createNewChildTopic(true, smPID)
+        newChildReturnCode := createNewChildTopic(true, smPID)
+        if (newChildReturnCode == -1)
+            return
     }
     else
     if (target == 1)
