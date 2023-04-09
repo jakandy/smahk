@@ -260,8 +260,8 @@ setRef(refsString, choicesDlg, smPID)
     ; Open edit references window
     sendContextMenuCommand(660, smPID)
     WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
-    WinActivate("ahk_class TInputDlg ahk_pid " smPID)
-    WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
+    ;WinActivate("ahk_class TInputDlg ahk_pid " smPID)
+    ;WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     
     ; Enter references
     A_Clipboard := ""
@@ -271,7 +271,7 @@ setRef(refsString, choicesDlg, smPID)
         MsgBox("Clipboard failure.", "Error!", 0)
         return
     }
-    safePasteText()
+    Send("^{v}")
     Send("^{Enter}")
     
     if (choicesDlg == true)
