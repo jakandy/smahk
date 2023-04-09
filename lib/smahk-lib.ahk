@@ -148,9 +148,9 @@ safePasteText(timeout := 10000)
             Sleep(50)
         }
         Send("^{v}")
-        waitTextCursor(start_CaretX, start_CaretY, timeout)
+        timedout := waitTextCursor(start_CaretX, start_CaretY, timeout)
     }
-    Return
+    Return timedout
 }
 
 ; Function name: openLinkAtMousePos
@@ -258,10 +258,11 @@ setRef(refsString, choicesDlg, smPID)
     ClipSaved := ClipboardAll()
     
     ; Open edit references window
-    sendContextMenuCommand(660, smPID)
+    ;sendContextMenuCommand(660, smPID) <-- doesnt work
+    Send("!{f10}")
+    Send("{f}")
+    Send("{e}")
     WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
-    ;WinActivate("ahk_class TInputDlg ahk_pid " smPID)
-    ;WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     
     ; Enter references
     A_Clipboard := ""
@@ -271,7 +272,15 @@ setRef(refsString, choicesDlg, smPID)
         MsgBox("Clipboard failure.", "Error!", 0)
         return
     }
-    Send("^{v}")
+    
+    if (safePasteText(1000) == -1)
+    {
+        MsgBox("Unable to set references.", "Error!", 0)
+        WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
+        Send("{Esc}")
+        WinWaitNotActive("ahk_class TInputDlg ahk_pid " smPID)
+        return
+    }
     Send("^{Enter}")
     
     if (choicesDlg == true)

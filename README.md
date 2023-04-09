@@ -36,6 +36,7 @@ When both the script and SuperMemo is running, press any of the below hotkeys to
 ### SuperMemo hotkeys:
 - Alt-0-9: Change priority of current element within certain range
 - Ctrl-Alt-Middleclick: Open a hyperlink in web browser
+- Ctrl-Alt-H: Clear search highlights
 - Ctrl-Alt-O: Create image occlusion item
 - Ctrl-Alt-N: Create new child topic
 - Ctrl-Alt-C: Show GUI for concept options
