@@ -87,12 +87,6 @@ Main:
     ExitApp()
 }
 
-+esc::
-{
-    KeyWait("shift")
-    Reload()
-}
-
 ^!x::
 {
     KeyWait("ctrl")
