@@ -8,9 +8,9 @@ scripting language AutoHotkey.
 2) Download and extract all files from this repository into any directory
 3) Run "smahk.ahk"
 
-The first time running the script you will be prompted to specify the file
+The first time running "smahk.ahk" you will be prompted to specify the file
 path for: the SuperMemo executable and the executable for the web browser you want to use for web imports.
-The paths can be changed manually after installation by editing "smahk-settings.ini".
+The paths can be changed manually after configuration by editing "smahk-settings.ini".
 
 Be aware that only one collection can be used for each smahk installation.
 To use smahk with several collections you will therefore need to install
@@ -24,18 +24,17 @@ Run "smahk.ahk" when you want to start SuperMemo AHK. Your SuperMemo installatio
 When both the script and SuperMemo is running, press any of the below hotkeys to perform the associated action.
 
 ### General hotkeys (can be invoked from any application):
-- Ctrl-Alt-X: Extract text or image into new child topic
-- Ctrl-Shift-X: Extract text or image into previous topic
-- Alt-Shift-X: Extract text or image into current topic
+- Ctrl-Alt-X: Extract selection into new child topic
+- Ctrl-Shift-X: Extract selection into previous topic
+- Alt-Shift-X: Extract selection into current topic
 - Alt-Esc: Terminate smahk script
-- Shift-Esc: Reload smahk script
 
 ### Browser hotkeys:
 - Ctrl-Alt-I: Show GUI for importing web article
 
 ### SuperMemo hotkeys:
-- Alt-0-9: Change priority of current element within certain range
-- Ctrl-Alt-Middleclick: Open a hyperlink in web browser
+- Alt-0 to Alt-9: Change priority of current element within certain range
+- Ctrl-Alt-Middleclick: Open a hyperlink in the web browser
 - Ctrl-Alt-H: Clear search highlights
 - Ctrl-Alt-O: Create image occlusion item
 - Ctrl-Alt-N: Create new child topic
@@ -44,7 +43,7 @@ When both the script and SuperMemo is running, press any of the below hotkeys to
 - Ctrl-Alt-Backspace: Go to marked element
 - Ctrl-Alt-f12: Backup collection
 
-More usage information can be found inside of the script files themselves.
+More usage information is documented inside of the script files.
 
 Closing SuperMemo will automatically terminate the smahk script.
 
