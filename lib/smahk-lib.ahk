@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - AutoHotkey library
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   v1.0.1, 04/2023
 ;
 ; Author:
 ;   andyjak
@@ -258,10 +258,8 @@ setRef(refsString, choicesDlg, smPID)
     ClipSaved := ClipboardAll()
     
     ; Open edit references window
-    ;sendContextMenuCommand(660, smPID) <-- doesnt work
-    Send("!{f10}")
-    Send("{f}")
-    Send("{e}")
+    safeActivateElementWindow(smPID)
+    sendContextMenuCommand(660, smPID)
     WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     
     ; Enter references
