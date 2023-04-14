@@ -44,10 +44,6 @@
 ;
 
 #Requires AutoHotkey v2.0
-SendMode("Input")
-SetWorkingDir(A_ScriptDir)
-#SingleInstance ignore
-SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"
 
 ; ******************************************************************************
@@ -142,14 +138,15 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
         
         ; Insert references
         if (ref == true)
+        {
             setRef(refsMerged, false, smPID)
+            Sleep(500)
+        }
         
         ; set title
         Send("^+{p}")
         WinWaitActive("ahk_class TElParamDlg ahk_pid " smPID)
-        Send("{esc}")
-        WinWaitNotActive("ahk_class TElParamDlg ahk_pid " smPID)
-        PostMessage(0x0111, 116, , , "ahk_class TElWind ahk_pid " smPID)
+        Send("{TAB 3}")
         A_Clipboard := ""
         A_Clipboard := elementTitle
         if ( !ClipWait(1, 0) )
@@ -157,9 +154,6 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
             MsgBox("Clipboard failure.", "Error!", 0)
             return
         }
-        WinWaitActive("ahk_class TChoicesDlg ahk_pid " smPID)
-        Send("{enter}")
-        WinWaitActive("ahk_class TTitleEdit ahk_pid " smPID)
         safePasteText()
         Send("{enter}")
     }

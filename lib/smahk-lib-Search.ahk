@@ -40,10 +40,6 @@
 ;
 
 #Requires AutoHotkey v2.0
-SendMode("Input")
-SetWorkingDir(A_ScriptDir)
-#SingleInstance ignore
-SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"
 
 ; ******************************************************************************

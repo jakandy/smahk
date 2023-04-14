@@ -107,7 +107,7 @@ waitElement(previousEl, smPID)
 ;
 ; Return:
 ;   0 - if text cursor has been moved
-;   -1 - if loop times out before text cursor has been moved
+;   1 - if loop times out before text cursor has been moved
 ;
 waitTextCursor(start_CaretX, start_CaretY, timeout := 10000)
 {
@@ -135,7 +135,7 @@ waitTextCursor(start_CaretX, start_CaretY, timeout := 10000)
 ;   timeout - number of milliseconds elapse until loop should break
 ;
 ; Return:
-;   ---
+;   timedout - 1 if function timeout has been reached, 0 otherwise
 ;
 safePasteText(timeout := 10000)
 {
@@ -259,6 +259,7 @@ setRef(refsString, choicesDlg, smPID)
     
     ; Open edit references window
     safeActivateElementWindow(smPID)
+    Sleep(50)
     sendContextMenuCommand(660, smPID)
     WinWaitActive("ahk_class TInputDlg ahk_pid " smPID)
     

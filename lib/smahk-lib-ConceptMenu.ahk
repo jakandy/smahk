@@ -42,12 +42,7 @@
 ;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;   GNU General Public License for more details.
 ;
-
 #Requires AutoHotkey v2.0
-SendMode("Input")
-SetWorkingDir(A_ScriptDir)
-#SingleInstance ignore
-SetKeyDelay(0, 10)
 #Include "smahk-lib.ahk"
 InstallKeybdHook()                   ; Used for enabling A_PriorKey variable
 KeyHistory(2)                        ; Number of previous keypresses in history
