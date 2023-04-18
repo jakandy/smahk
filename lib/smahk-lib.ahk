@@ -481,3 +481,34 @@ sendContextMenuCommand(wParam, smPID)
     DetectHiddenWindows(false)
     return
 }
+
+; Function name: detectImageComponent
+; --------------------
+;
+; Description:
+;   Detects if there is an image component in the current element.
+;   If there is an image component, focus is shifted to that control
+;   by opening and closing the "Process images" dialog.
+;
+; Input parameter:
+;   smPID - the process ID of the SuperMemo process that has the collection open
+;
+; Return:
+;   0 - if no image component is found the current element
+;   1 - if an image component is found the current element
+;
+detectImageComponent(smPID)
+{
+    safeActivateElementWindow(smPID)
+    Send("^+{f8}")
+    while (WinActive("ahk_class TChoicesDlg ahk_pid " . smPID) == 0)
+    {
+        if (WinActive("ahk_class TMsgDialog ahk_pid " . smPID))
+            return 0
+        
+        Sleep(50)
+    }
+    Send("{Escape}")
+    WinWaitNotActive("ahk_class TChoicesDlg ahk_pid " . smPID)
+    return 1
+}
