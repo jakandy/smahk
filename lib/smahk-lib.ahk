@@ -64,34 +64,6 @@ setPriority(prio, smPID)
     return 0
 }
 
-
-; Function name: waitElement
-; --------------------
-;
-; Description:
-;   Loop to wait until SM has switched to a new element.
-;   Save the title of the previous element with WinGetTitle in a variable
-;   "previousEl" and then call this function: waitElement(previousEl, smPID).
-;   If it doesn't work, try putting a time delay before the function call.
-;
-; Input parameter:
-;   previousEl - String of the window title of the previous element.
-;   smPID - the process ID of the SuperMemo process that has the collection open
-;
-; Return:
-;   ---
-;
-waitElement(previousEl, smPID)
-{
-    while ( (A_Index == 1) OR (previousEl == nextEl) )
-    {
-        nextEl := WinGetTitle("ahk_class TElWind ahk_pid " smPID)
-        Sleep(50)
-    }
-    Sleep(100)
-    Return
-}
-
 ; Function name: waitTextCursor
 ; --------------------
 ;
@@ -203,7 +175,7 @@ createNewChildTopic(inheritance, smPID)
     if (inheritance == true)
     {
         Send("!{d}")
-        waitElement(currentEl, smPID)
+        WinWaitNotActive(currentEl)
         
         ; Make sure extract is a topic
         sendContextMenuCommand(738, smPID)

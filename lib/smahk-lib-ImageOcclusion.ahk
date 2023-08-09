@@ -63,7 +63,7 @@ imageOcclusion(smPID)
     safeActivateElementWindow(smPID)
     parentName := WinGetTitle("A")
     Send("!{d}")
-    waitElement(parentName, smPID)
+    WinWaitNotActive(parentName)
 
     ; Find and select the first image component
     detectImageComponent(smPID)

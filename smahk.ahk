@@ -2,7 +2,7 @@
 ;   SuperMemo AHK
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   v1.0.1, 04/2023
 ;
 ; Author:
 ;   andyjak
@@ -180,7 +180,7 @@ Main:
     return
 }
 
-^!f12::
+^!+f12::
 {
     KeyWait("ctrl")
     KeyWait("alt")
@@ -287,8 +287,6 @@ Main:
 ; ************************** CONFIGURATION SUBROUTINE **************************
 ; ******************************************************************************
 Configuration:
-    ; TODO: add option to change default keyboard bindings for smahk
-
     if not FileExist("smahk-settings.ini")
         FileAppend("", "smahk-settings.ini")
 

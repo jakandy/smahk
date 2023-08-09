@@ -113,7 +113,7 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
     {
         prevEl := WinGetTitle("A")
         Send("!{n}")
-        waitElement(prevEl, smPID)
+        WinWaitNotActive(prevEl)
     }
 
     if (onlyLink == false)
@@ -133,14 +133,14 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
         while ( (WinActive("ahk_class TChecksDlg") == 0) AND (WinActive("ahk_class TMsgDialog") == 0) )
             Sleep(50)
         Send("{Enter}")
-        waitTextCursor(start_CaretX, start_CaretY)  ; used for knowing when filtering done
-        Sleep(50)
+        waitTextCursor(start_CaretX, start_CaretY)
+		WinWaitActive("ahk_class TElWind ahk_pid " smPID)
         
         ; Insert references
         if (ref == true)
         {
             setRef(refsMerged, false, smPID)
-            Sleep(500)
+            Sleep(100)
         }
         
         ; set title
@@ -179,7 +179,7 @@ importBrowserTab(ref, onlyLink, importToChild, prio, browserPID, smPID)
         ; go back to parent
         childTitle := WinGetTitle("A")
         Send("^{up}")
-        waitElement(childTitle, smPID)
+        WinWaitNotActive(childTitle)
     }
     
     ; Window switch to web browser

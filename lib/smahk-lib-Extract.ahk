@@ -66,7 +66,7 @@ anyExtract(target, smPID)
     ClipSaved := ClipboardAll()
     safeCopyToClipboard("", 10000)
     
-    ; Copy content
+    ; Copy selection
     Send("^{c}")
     
     if !ClipWait(1, 0)
@@ -110,35 +110,34 @@ anyExtract(target, smPID)
     else
     if (target == 1)
     {
-        ; append to previous extract
-        ; switch to previous element
+        ; append to previous element
         prevEl := WinGetTitle("A")
         Send("!{left}")
-        waitElement(prevEl, smPID)
-        
-        ; move the cursor to the end of the topic
+        WinWaitNotActive(prevEl)
         moveCursorToEnd(smPID)
     }
     else
     if (target == 2)
     {
+        ; append to current element
         prevEl := WinGetTitle("A")
         Send("!{left}")
-        waitElement(prevEl, smPID)
+        WinWaitNotActive(prevEl)
         prevEl := WinGetTitle("A")
         Send("!{right}")
-        waitElement(prevEl, smPID)
+        WinWaitNotActive(prevEl)
         moveCursorToEnd(smPID)
     }
     else
     {
-        MsgBox("target argument has to be 0, 1 or 2", "Error!", 0)
+        MsgBox("Target argument has to be 0, 1 or 2", "Error!", 0)
         A_Clipboard := ClipSaved
         ClipSaved := ""
         Return
     }
     Sleep(100)
     
+    ; TODO: fix so it works with element with image component
     if (imageExtract == false)
     {
         ; paste text
@@ -147,10 +146,11 @@ anyExtract(target, smPID)
     else
     if (imageExtract == true)
     {
-        if (target == 0)
+		if (target == 0)
         {
             ; set template
-            Send("^+{m}")
+            Send("Extracted image")
+			Send("^+{m}")
             WinWaitActive("ahk_class TRegistryForm ahk_pid " smPID)
             Send("article picture")
             Send("{enter}")
@@ -181,7 +181,7 @@ anyExtract(target, smPID)
     }
     else
     {
-        MsgBox("Could not determine if you made a text or image extract.", "Error!", 0)
+        MsgBox("Could not determine if a text or image extract was made.", "Error!", 0)
         A_Clipboard := ClipSaved
         ClipSaved := ""
         Return
@@ -192,11 +192,10 @@ anyExtract(target, smPID)
         ; go to parent
         prevEl := WinGetTitle("A")
         Send("^{up}")
-        waitElement(prevEl, smPID)
+        WinWaitNotActive(prevEl)
     }
     
     ; switch back to application
-    ; TODO: switch to winactivate
     Send("!{tab}")
     
     ; Restore clipboard
