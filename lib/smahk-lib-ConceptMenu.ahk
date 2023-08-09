@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Concept menu module
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   1.0.1, 08/2023
 ;
 ; Author:
 ;   andyjak
@@ -26,7 +26,7 @@
 ;   - Move to concept: Lets the user choose a concept to move the current element to.
 ;   - Search for concept: Activates the search bar in the element window.
 ;
-; Tested with:
+; Test setup:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10

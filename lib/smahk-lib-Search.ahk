@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Search module
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   1.0.1, 08/2023
 ;
 ; Author:
 ;   andyjak
@@ -21,7 +21,7 @@
 ;   with a custom search command. Read the docs of your application launcher
 ;   on how to do this.
 ;   
-; Tested with:
+; Test setup:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Keypirinha, version 2.26

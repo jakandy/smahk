@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Web Importer module
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   1.0.1, 08/2023
 ;
 ; Author:
 ;   andyjak
@@ -25,7 +25,7 @@
 ;   - Import link only: Imports only the title and link of the article
 ;   - Popup message on finish: Shows a messagebox when import is finished
 ;
-; Tested with:
+; Test setup:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Mozilla Firefox, version 102.9.0esr (64-bit)

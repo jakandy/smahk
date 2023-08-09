@@ -2,7 +2,7 @@
 ;   SuperMemo AHK - Backup module
 ;
 ; Version:
-;   v1.0.0, 03/2023
+;   1.0.1, 08/2023
 ;
 ; Author:
 ;   andyjak
@@ -20,7 +20,7 @@
 ;   directory, nothing fancy. When the collection has successfully been backed up,
 ;   a confirmation messagebox will appear.
 ;
-; Tested with:
+; Test setup:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10

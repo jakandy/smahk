@@ -37,13 +37,13 @@ When both the script and SuperMemo is running, press any of the below hotkeys to
 - Ctrl-Alt-Middleclick: Open a hyperlink in the web browser
 - Ctrl-Alt-H: Clear search highlights
 - Ctrl-Alt-O: Create image occlusion item
-- Ctrl-Alt-N: Create new child topic
+- Ctrl-Alt-N: Create a new child topic
 - Ctrl-Alt-C: Show GUI for concept options
 - Ctrl-Alt-Enter: Mark the current element
 - Ctrl-Alt-Backspace: Go to marked element
-- Ctrl-Alt-f12: Backup collection
+- Ctrl-Alt-Shift-f12: Backup collection
 
-More usage information is documented inside of the script files.
+More usage information can be found in the source code.
 
 Closing SuperMemo will automatically terminate the smahk script.
 

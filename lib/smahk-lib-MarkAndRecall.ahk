@@ -2,8 +2,7 @@
 ;   SuperMemo AHK - Mark and Recall module
 ;
 ; Version:
-;   v1.0.0, 03/2023
-;
+;   1.0.1, 08/2023
 ; Author:
 ;   andyjak
 ; 
@@ -19,7 +18,7 @@
 ;   Please read the header of each function for more info about what they do and
 ;   how to use them.
 ;
-; Tested with:
+; Test setup:
 ;   - SuperMemo, version 18.05
 ;   - AutoHotkey, version 2.0.2
 ;   - Windows 10
